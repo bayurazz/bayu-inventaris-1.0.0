@@ -123,31 +123,39 @@ export default function DashboardAdmin() {
   };
 
   return (
-    <section className="flex flex-col justify-center items-center gap-5 w-full h-full ">
-      <div className="flex flex-col items-center w-4/5 2/5 bg-blue-300 rounded-xl relative">
+    <section className="flex flex-col justify-center items-center gap-5 w-full h-450 bg-gray-300">
+      <div className="flex flex-col justify-center items-center w-4/5 h-80 bg-white rounded-xl relative">
         <h2 className="text-2xl font-bold text-white">
           Selamat Datang Admin !
         </h2>
         <p className="text-white">
           Halo, {user?.nama} ({user?.role})
         </p>
-        <div className=" w-1/2 bg-yellow-100">
-          <button onClick={handleLogout}>Logout</button>
-          {" | "}
-          <Link to="/">Tampilan Guest</Link>
+        <div className=" w-fit h-fit absolute flex gap-2 top-5 left-5 ">
+          <button
+            className="w-fit h-fit px-2 py-1 cursor-pointer rounded-xl text-white bg-linear-to-br bg-[#16A34A] hover:bg-[#3760469d] text-2xl font-semibold"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+          <Link
+            className="w-fit h-fit px-2 py-1 cursor-pointer rounded-xl text-white bg-linear-to-br bg-[#2563EB] hover:bg-[#1D4ED8] text-2xl font-semibold"
+            to="/"
+          >
+            Back to guest form
+          </Link>
           <h3>{editId ? "Form Edit Barang" : "Form Tambah Barang"}</h3>
         </div>
 
         {/* FORM INPUT CRUD */}
-
         <form
-          className="flex justify-center gap-20 w-full h-20"
+          className="flex justify-center items-center absolute bottom-5 left-0 gap-20 w-full h-30"
           onSubmit={handleSubmit}
         >
           <div className="flex flex-col">
             <label>Nama Barang: </label>
             <input
-              className="w-fit h-fit p-4 bg-blue-200 rounded-xl"
+              className="w-fit h-fit p-4 border rounded-xl"
               type="text"
               value={namaBarang}
               onChange={(e) => setNamaBarang(e.target.value)}
@@ -159,7 +167,7 @@ export default function DashboardAdmin() {
           <div className="flex flex-col">
             <label>Kategori: </label>
             <select
-              className="w-fit h-fit p-4 bg-blue-200 rounded-xl"
+              className="w-fit h-fit p-4 border rounded-xl"
               value={kategoriId}
               onChange={(e) => setKategoriId(e.target.value)}
               required
@@ -176,7 +184,7 @@ export default function DashboardAdmin() {
           <div className="flex flex-col ">
             <label>Stok: </label>
             <input
-              className="w-fit h-fit p-4 bg-blue-200 rounded-xl"
+              className="w-fit h-fit p-4 border rounded-xl"
               type="number"
               value={stok}
               onChange={(e) => setStok(e.target.value)}
@@ -185,7 +193,10 @@ export default function DashboardAdmin() {
             />
           </div>
 
-          <button type="submit">
+          <button
+            className="w-fit h-fit p-4 cursor-pointer rounded-xl text-white bg-red-500 hover:bg-red-600"
+            type="submit"
+          >
             {editId ? "Simpan Perubahan" : "Tambah Barang"}
           </button>
 
@@ -203,7 +214,7 @@ export default function DashboardAdmin() {
       </div>
 
       {/* TABEL DATA BARANG DENGAN AKSI EDIT & HAPUS */}
-      <div className="flex flex-col justify-center items-center w-4/5 h-fit bg-gray-300 shadow-2xl/90">
+      <div className="flex flex-col justify-center items-center w-4/5 h-fit rounded-lg bg-white shadow-2xl/90">
         <Link to="/kategori">edit kategori</Link>
         <table className="w-4/5 text-black">
           <thead className="bg-gray-400">
@@ -223,8 +234,20 @@ export default function DashboardAdmin() {
                 <td>{item.Kategori?.nama_kategori || "-"}</td>
                 <td>{item.stok}</td>
                 <td>
-                  <button onClick={() => handleEditClick(item)}>Edit</button>{" "}
-                  <button onClick={() => handleDelete(item.id)}>Hapus</button>
+                  <div className="flex gap-5">
+                    <button
+                      className="w-fit h-fit p-4 text-white bg-green-500 hover:bg-green-800 rounded-lg cursor-pointer"
+                      onClick={() => handleEditClick(item)}
+                    >
+                      Edit
+                    </button>{" "}
+                    <button
+                      className="w-fit h-fit p-4 text-white hover:bg-red-800 bg-red-500 rounded-lg cursor-pointer"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      Hapus
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
