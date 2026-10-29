@@ -2,91 +2,117 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function DashboardAdmin() {
-  const [barang, setBarang] = useState([]);
-  const [kategori, setKategori] = useState([]);
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
+  // =========================================================================
+  // 1. STATE (Variabel React untuk Menyimpan Data Sementara di Browser)
+  // =========================================================================
+  const [barang, setBarang] = useState([]);       // Menyimpan daftar barang dari database
+  const [kategori, setKategori] = useState([]);   // Menyimpan daftar kategori untuk pilihan dropdown
+  const [user, setUser] = useState(null);         // Menyimpan data admin yang sedang login
 
-  // State untuk Form Input
+  // State untuk menampung teks dari Form Input
   const [namaBarang, setNamaBarang] = useState("");
   const [kategoriId, setKategoriId] = useState("");
   const [stok, setStok] = useState("");
 
-  // State penentu: apakah sedang Tambah Baru (null) atau Edit (berisi ID barang)
+  // Kunci Logika Form:
+  // - Jika editId === null -> Form dalam mode TAMBAH BARANG BARU (POST)
+  // - Jika editId ada isinya (ID barang) -> Form dalam mode EDIT BARANG (PUT)
   const [editId, setEditId] = useState(null);
 
-  // 1. Cek Login & Ambil Data Awal saat halaman dibuka
+  const navigate = useNavigate();
+
+  // =========================================================================
+  // 2. USE EFFECT (Dijalankan otomatis 1x saat halaman pertama kali dibuka)
+  // =========================================================================
   useEffect(() => {
+    // 1. Ambil data login dari LocalStorage
     const savedUser = localStorage.getItem("user");
     if (!savedUser) {
       navigate("/login");
       return;
     }
 
-    const parsed = JSON.parse(savedUser);
-    if (parsed.role !== "admin") {
+    const parsedUser = JSON.parse(savedUser);
+    if (parsedUser.role !== "admin") {
       navigate("/");
       return;
     }
-    setUser(parsed);
+    setUser(parsedUser);
 
+    // 2. Ambil data barang & kategori dari backend
     fetchBarang();
     fetchKategori();
   }, [navigate]);
 
-  // Fungsi Ambil Data Barang (READ)
-  const fetchBarang = () => {
-    fetch("http://localhost:5000/api/barang")
-      .then((res) => res.json())
-      .then((data) => setBarang(data))
-      .catch((err) => console.error(err));
+  // =========================================================================
+  // 3. FUNGSI READ (Mengambil Data dari Backend / API)
+  // =========================================================================
+  const fetchBarang = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/barang");
+      const data = await res.json();
+      setBarang(data);
+    } catch (err) {
+      console.error("Gagal mengambil data barang:", err);
+    }
   };
 
-  // Fungsi Ambil Data Kategori untuk Dropdown Select
-  const fetchKategori = () => {
-    fetch("http://localhost:5000/api/kategori")
-      .then((res) => res.json())
-      .then((data) => setKategori(data))
-      .catch((err) => console.error(err));
+  const fetchKategori = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/kategori");
+      const data = await res.json();
+      setKategori(data);
+    } catch (err) {
+      console.error("Gagal mengambil data kategori:", err);
+    }
   };
 
-  // 2. Fungsi Submit (Bisa CREATE atau UPDATE tergantung editId)
+  // =========================================================================
+  // 4. FUNGSI CREATE & UPDATE (Simpan Data Saat Tombol Form Diklik)
+  // =========================================================================
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Mencegah browser reload/refresh sendiri
 
+    // Siapkan data objek barang
     const dataBarang = {
       nama_barang: namaBarang,
       kategori_id: kategoriId,
       stok: Number(stok),
     };
 
-    if (editId === null) {
-      // PROSES TAMBAH (CREATE)
-      await fetch("http://localhost:5000/api/barang", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataBarang),
-      });
-      alert("Barang berhasil ditambahkan!");
-    } else {
-      // PROSES EDIT (UPDATE)
-      await fetch(`http://localhost:5000/api/barang/${editId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataBarang),
-      });
-      alert("Barang berhasil diperbarui!");
-      setEditId(null);
-    }
+    try {
+      if (editId === null) {
+        // --- PROSES CREATE (Tambah Baru via POST) ---
+        await fetch("http://localhost:5000/api/barang", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dataBarang),
+        });
+        alert("Barang berhasil ditambahkan!");
+      } else {
+        // --- PROSES UPDATE (Edit via PUT) ---
+        await fetch(`http://localhost:5000/api/barang/${editId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dataBarang),
+        });
+        alert("Barang berhasil diperbarui!");
+      }
 
-    // Reset Form & Refresh Data Tabel
-    resetForm();
-    fetchBarang();
+      // Bersihkan input form & ambil data terbaru dari backend
+      resetForm();
+      fetchBarang();
+    } catch (err) {
+      console.error("Gagal menyimpan data:", err);
+      alert("Terjadi kesalahan saat menyimpan data!");
+    }
   };
 
-  // CREATE atau UPDATE kategori
+  // =========================================================================
+  // 5. FUNGSI AKSI: EDIT, DELETE, RESET & LOGOUT
+  // =========================================================================
 
-  // 3. Masukkan Data ke Form saat tombol 'Edit' diklik
+  // Saat tombol 'Edit' di baris tabel diklik: isi form dengan data yang dipilih
   const handleEditClick = (item) => {
     setEditId(item.id);
     setNamaBarang(item.nama_barang);
@@ -94,22 +120,24 @@ export default function DashboardAdmin() {
     setStok(item.stok);
   };
 
-  // 4. Fungsi Hapus (DELETE)
+  // Saat tombol 'Hapus' diklik: kirim request DELETE ke backend
   const handleDelete = async (id) => {
-    const yakin = window.confirm(
-      "Apakah Anda yakin ingin menghapus barang ini?"
-    );
+    const yakin = window.confirm("Apakah Anda yakin ingin menghapus barang ini?");
     if (!yakin) return;
 
-    await fetch(`http://localhost:5000/api/barang/${id}`, {
-      method: "DELETE",
-    });
-
-    alert("Barang berhasil dihapus!");
-    fetchBarang(); // Refresh tabel
+    try {
+      await fetch(`http://localhost:5000/api/barang/${id}`, {
+        method: "DELETE",
+      });
+      alert("Barang berhasil dihapus!");
+      fetchBarang(); // Refresh tabel setelah dihapus
+    } catch (err) {
+      console.error("Gagal menghapus barang:", err);
+      alert("Gagal menghapus barang!");
+    }
   };
 
-  // Fungsi Reset Form
+  // Mengembalikan form ke keadaan kosong semula
   const resetForm = () => {
     setEditId(null);
     setNamaBarang("");
@@ -117,11 +145,15 @@ export default function DashboardAdmin() {
     setStok("");
   };
 
+  // Logout akun admin
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/login");
   };
 
+  // =========================================================================
+  // 6. TAMPILAN HALAMAN (JSX / HTML)
+  // =========================================================================
   return (
     <section className="flex flex-col justify-center items-center gap-5 w-full h-450 bg-gray-300">
       <div className="flex flex-col justify-center items-center w-4/5 h-80 bg-white rounded-xl relative">
@@ -131,7 +163,8 @@ export default function DashboardAdmin() {
         <p className="text-white">
           Halo, {user?.nama} ({user?.role})
         </p>
-        <div className=" w-fit h-fit absolute flex gap-2 top-5 left-5 ">
+
+        <div className="w-fit h-fit absolute flex gap-2 top-5 left-5">
           <button
             className="w-fit h-fit px-2 py-1 cursor-pointer rounded-xl text-white bg-linear-to-br bg-[#16A34A] hover:bg-[#3760469d] text-2xl font-semibold"
             onClick={handleLogout}
@@ -144,7 +177,9 @@ export default function DashboardAdmin() {
           >
             Back to guest form
           </Link>
-          <h3>{editId ? "Form Edit Barang" : "Form Tambah Barang"}</h3>
+          <h3 className="text-xl font-bold self-center">
+            {editId ? "Form Edit Barang" : "Form Tambah Barang"}
+          </h3>
         </div>
 
         {/* FORM INPUT CRUD */}
@@ -181,7 +216,7 @@ export default function DashboardAdmin() {
             </select>
           </div>
 
-          <div className="flex flex-col ">
+          <div className="flex flex-col">
             <label>Stok: </label>
             <input
               className="w-fit h-fit p-4 border rounded-xl"
@@ -204,8 +239,8 @@ export default function DashboardAdmin() {
           {editId && (
             <button
               type="button"
+              className="w-fit h-fit p-4 cursor-pointer rounded-xl text-white bg-gray-500 hover:bg-gray-600"
               onClick={resetForm}
-              style={{ marginLeft: "8px" }}
             >
               Batal Edit
             </button>
@@ -240,7 +275,7 @@ export default function DashboardAdmin() {
                       onClick={() => handleEditClick(item)}
                     >
                       Edit
-                    </button>{" "}
+                    </button>
                     <button
                       className="w-fit h-fit p-4 text-white hover:bg-red-800 bg-red-500 rounded-lg cursor-pointer"
                       onClick={() => handleDelete(item.id)}
