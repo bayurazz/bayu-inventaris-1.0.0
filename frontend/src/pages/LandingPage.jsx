@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 export default function LandingPage() {
   // 1. STATE
   const [barang, setBarang] = useState([]); // Menyimpan daftar barang untuk dilihat guest
-  const [user, setUser] = useState(null);   // Mengecek apakah ada user yang sedang login
+  const [user, setUser] = useState(null); // Mengecek apakah ada user yang sedang login
   const navigate = useNavigate();
 
   // 2. USE EFFECT (Ambil data otomatis saat halaman dimuat)
@@ -41,26 +41,30 @@ export default function LandingPage() {
   };
 
   return (
-    <section className="flex flex-row justify-start items-start w-full h-screen">
+    <section className="flex flex-row justify-start items-start w-full h-200">
       {/* SIDEBAR KIRI: Info Status Login */}
       <div className="bg-gray-700 w-1/4 h-full p-6 text-white flex flex-col gap-4">
         <h2 className="text-2xl font-bold">Dashboard Guest</h2>
 
         {user ? (
-          <div>
-            <p className="mb-2">
-              Login sebagai: <span className="font-semibold">{user.nama}</span> ({user.role})
+          <div className="flex flex-col gap-5">
+            <p className="mb-2 ">
+              Login sebagai: <span className="font-semibold">{user.nama}</span>{" "}
+              ({user.role})
             </p>
             {user.role === "admin" && (
               <div className="mb-2">
-                <Link to="/admin" className="text-blue-300 underline hover:text-blue-200">
+                <Link
+                  to="/admin"
+                  className="px-5 py-3 font-semibold bg-blue-500 hover:bg-blue-600 cursor-pointer rounded"
+                >
                   &rarr; Ke Dashboard Admin
                 </Link>
               </div>
             )}
             <button
               onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded cursor-pointer text-white"
+              className=" px-4 py-2 rounded cursor-pointer font-semibold text-white bg-red-500 hover:bg-red-600"
             >
               Logout
             </button>
@@ -79,8 +83,8 @@ export default function LandingPage() {
       </div>
 
       {/* KONTEN KANAN: Tabel Barang (Read Only) */}
-      <div className="flex justify-center items-center w-3/4 h-full p-8">
-        <table className="bg-white w-full max-w-4xl shadow rounded-lg overflow-hidden border">
+      <div className="flex flex-col justify-center items-center p-8 w-full">
+        <table className="bg-white w-3/4 h-screen shadow-2xl/90 rounded-lg  border">
           <thead className="bg-blue-600 text-white">
             <tr>
               <th className="p-3 text-left">No</th>

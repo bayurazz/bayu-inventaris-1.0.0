@@ -37,11 +37,12 @@ export default function Login() {
 
   return (
     <div className="flex flex-col justify-center items-center w-full h-screen relative">
-      <img
+      <div className="w-full h-screen absolute z-0 bg-linear-to-br from-blue-400 via-indigo-300 to-blue-500"></div>
+      {/* <img
         className="w-full h-screen absolute z-0 object-cover"
         src="/img/mobil.png"
         alt=""
-      />
+      /> */}
       <div className="w-full h-screen absolute z-0 bg-black/40"></div>
 
       <form
@@ -51,7 +52,9 @@ export default function Login() {
         <h2 className="font-bold text-2xl text-gray-800">Login</h2>
 
         <div className="flex flex-col w-full">
-          <label className="text-sm font-semibold mb-1 text-gray-700">Username:</label>
+          <label className="text-sm font-semibold mb-1 text-gray-700">
+            Username:
+          </label>
           <input
             className="border p-3 rounded-lg w-full"
             placeholder="Masukkan Username"
@@ -63,7 +66,9 @@ export default function Login() {
         </div>
 
         <div className="flex flex-col w-full">
-          <label className="text-sm font-semibold mb-1 text-gray-700">Password:</label>
+          <label className="text-sm font-semibold mb-1 text-gray-700">
+            Password:
+          </label>
           <input
             className="border p-3 rounded-lg w-full"
             placeholder="Masukkan Password"
@@ -82,7 +87,7 @@ export default function Login() {
         </button>
 
         <Link to="/" className="text-sm text-gray-600 hover:text-blue-600 mt-2">
-          Masuk sebagai Guest (Tanpa Login)
+          Sign in wihout (Tanpa Login)
         </Link>
       </form>
     </div>

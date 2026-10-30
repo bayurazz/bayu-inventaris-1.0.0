@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+// import { Pencil } from "lucide-react";
 export default function DashboardAdmin() {
   // =========================================================================
   // 1. STATE (Variabel React untuk Menyimpan Data Sementara di Browser)
   // =========================================================================
-  const [barang, setBarang] = useState([]);       // Menyimpan daftar barang dari database
-  const [kategori, setKategori] = useState([]);   // Menyimpan daftar kategori untuk pilihan dropdown
-  const [user, setUser] = useState(null);         // Menyimpan data admin yang sedang login
+  const [barang, setBarang] = useState([]); // Menyimpan daftar barang dari database
+  const [kategori, setKategori] = useState([]); // Menyimpan daftar kategori untuk pilihan dropdown
+  const [user, setUser] = useState(null); // Menyimpan data admin yang sedang login
 
   // State untuk menampung teks dari Form Input
   const [namaBarang, setNamaBarang] = useState("");
@@ -122,7 +122,9 @@ export default function DashboardAdmin() {
 
   // Saat tombol 'Hapus' diklik: kirim request DELETE ke backend
   const handleDelete = async (id) => {
-    const yakin = window.confirm("Apakah Anda yakin ingin menghapus barang ini?");
+    const yakin = window.confirm(
+      "Apakah Anda yakin ingin menghapus barang ini?"
+    );
     if (!yakin) return;
 
     try {
@@ -151,40 +153,36 @@ export default function DashboardAdmin() {
     navigate("/login");
   };
 
-  // =========================================================================
-  // 6. TAMPILAN HALAMAN (JSX / HTML)
-  // =========================================================================
   return (
-    <section className="flex flex-col justify-center items-center gap-5 w-full h-450 bg-gray-300">
-      <div className="flex flex-col justify-center items-center w-4/5 h-80 bg-white rounded-xl relative">
-        <h2 className="text-2xl font-bold text-white">
-          Selamat Datang Admin !
-        </h2>
+    <section className="flex flex-row justify-center items-center  w-full h-400 bg-gray-300">
+      <div className="flex flex-col w-1/4 h-full p-6 bg-gray-700 shadow-2xl/50">
+        <h2 className="text-2xl font-bold text-white">Welcome Admin !</h2>
         <p className="text-white">
           Halo, {user?.nama} ({user?.role})
         </p>
-
-        <div className="w-fit h-fit absolute flex gap-2 top-5 left-5">
-          <button
-            className="w-fit h-fit px-2 py-1 cursor-pointer rounded-xl text-white bg-linear-to-br bg-[#16A34A] hover:bg-[#3760469d] text-2xl font-semibold"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+        <h3 className="text-xl font-bold text-white">
+          {editId ? "Form Edit Barang" : "Form Tambah Barang"}
+        </h3>
+        <div className="flex flex-col justify-center gap-5 w-[90%] h-[10%]">
           <Link
-            className="w-fit h-fit px-2 py-1 cursor-pointer rounded-xl text-white bg-linear-to-br bg-[#2563EB] hover:bg-[#1D4ED8] text-2xl font-semibold"
+            className="flex items-center px-4 py-2 cursor-pointer rounded font-semibold bg-blue-500 hover:bg-blue-600 text-white"
             to="/"
           >
             Back to guest form
           </Link>
-          <h3 className="text-xl font-bold self-center">
-            {editId ? "Form Edit Barang" : "Form Tambah Barang"}
-          </h3>
+          <button
+            className="px-4 py-2 rounded cursor-pointer font-semibold bg-red-500 hover:bg-red-600 text-white"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
         </div>
+      </div>
 
+      <div className="flex flex-col justify-center items-center gap-5 w-full h-full">
         {/* FORM INPUT CRUD */}
         <form
-          className="flex justify-center items-center absolute bottom-5 left-0 gap-20 w-full h-30"
+          className="flex flex-row items-center justify-center gap-5 w-4/5 h-30 rounded-lg shadow-2xl/90 bg-white"
           onSubmit={handleSubmit}
         >
           <div className="flex flex-col">
@@ -246,48 +244,47 @@ export default function DashboardAdmin() {
             </button>
           )}
         </form>
-      </div>
-
-      {/* TABEL DATA BARANG DENGAN AKSI EDIT & HAPUS */}
-      <div className="flex flex-col justify-center items-center w-4/5 h-fit rounded-lg bg-white shadow-2xl/90">
-        <Link to="/kategori">edit kategori</Link>
-        <table className="w-4/5 text-black">
-          <thead className="bg-gray-400">
-            <tr>
-              <th className="text-white">No</th>
-              <th className="text-white">Nama Barang</th>
-              <th className="text-white">Kategori</th>
-              <th className="text-white">Stok</th>
-              <th className="text-white">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {barang.map((item, i) => (
-              <tr key={item.id}>
-                <td>{i + 1}</td>
-                <td>{item.nama_barang}</td>
-                <td>{item.Kategori?.nama_kategori || "-"}</td>
-                <td>{item.stok}</td>
-                <td>
-                  <div className="flex gap-5">
-                    <button
-                      className="w-fit h-fit p-4 text-white bg-green-500 hover:bg-green-800 rounded-lg cursor-pointer"
-                      onClick={() => handleEditClick(item)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="w-fit h-fit p-4 text-white hover:bg-red-800 bg-red-500 rounded-lg cursor-pointer"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      Hapus
-                    </button>
-                  </div>
-                </td>
+        {/* TABEL DATA BARANG DENGAN AKSI EDIT & HAPUS */}
+        <div className="flex flex-col justify-center items-center w-4/5 rounded-lg bg-white shadow-2xl/90">
+          <Link to="/kategori">edit kategori</Link>
+          <table className="w-4/5 text-black">
+            <thead className="bg-blue-600">
+              <tr>
+                <th className="text-white">No</th>
+                <th className="text-white">Nama Barang</th>
+                <th className="text-white">Kategori</th>
+                <th className="text-white">Stok</th>
+                <th className="text-white">Aksi</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {barang.map((item, i) => (
+                <tr key={item.id}>
+                  <td>{i + 1}</td>
+                  <td>{item.nama_barang}</td>
+                  <td>{item.Kategori?.nama_kategori || "-"}</td>
+                  <td>{item.stok}</td>
+                  <td>
+                    <div className="flex gap-5">
+                      <button
+                        className="w-fit h-fit p-4 text-white bg-green-500 hover:bg-green-800 rounded-lg cursor-pointer"
+                        onClick={() => handleEditClick(item)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="w-fit h-fit p-4 text-white hover:bg-red-800 bg-red-500 rounded-lg cursor-pointer"
+                        onClick={() => handleDelete(item.id)}
+                      >
+                        Hapus
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
   );
