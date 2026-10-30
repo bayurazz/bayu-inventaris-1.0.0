@@ -87,7 +87,7 @@ export default function Login() {
         </button>
 
         <Link to="/" className="text-sm text-gray-600 hover:text-blue-600 mt-2">
-          Sign in wihout (Tanpa Login)
+          Sign in without account (Tanpa Login)
         </Link>
       </form>
     </div>

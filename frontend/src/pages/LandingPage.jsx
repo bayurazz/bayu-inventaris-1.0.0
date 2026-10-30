@@ -41,7 +41,7 @@ export default function LandingPage() {
   };
 
   return (
-    <section className="flex flex-row justify-start items-start w-full h-200">
+    <section className="flex flex-row justify-start items-center w-full h-screen">
       {/* SIDEBAR KIRI: Info Status Login */}
       <div className="bg-gray-700 w-1/4 h-full p-6 text-white flex flex-col gap-4">
         <h2 className="text-2xl font-bold">Dashboard Guest</h2>
@@ -84,7 +84,7 @@ export default function LandingPage() {
 
       {/* KONTEN KANAN: Tabel Barang (Read Only) */}
       <div className="flex flex-col justify-center items-center p-8 w-full">
-        <table className="bg-white w-3/4 h-screen shadow-2xl/90 rounded-lg  border">
+        <table className="bg-white w-3/4 h-fit shadow-2xl/90 rounded-lg  border">
           <thead className="bg-blue-600 text-white">
             <tr>
               <th className="p-3 text-left">No</th>
@@ -102,7 +102,7 @@ export default function LandingPage() {
               </tr>
             ) : (
               barang.map((item, i) => (
-                <tr key={item.id} className="border-b hover:bg-gray-50">
+                <tr key={item.id} className="border-b hover:bg-gray-100">
                   <td className="p-3">{i + 1}</td>
                   <td className="p-3 font-medium">{item.nama_barang}</td>
                   <td className="p-3">{item.Kategori?.nama_kategori || "-"}</td>
